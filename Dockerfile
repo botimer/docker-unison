@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.16
+FROM phusion/baseimage:0.9.18
 CMD ["/sbin/my_init"]
 
 MAINTAINER Leigh McCulloch
@@ -9,15 +9,11 @@ COPY unison-2.48.3.tar.gz /tmp/unison/
 
 # Build and install Unison versions then cleanup
 COPY unison-install.sh .
-RUN apt-get update -y \
- && apt-get install -y wget \
- && wget http://download.opensuse.org/repositories/home:ocaml/xUbuntu_14.04/Release.key \
- && apt-key add - < Release.key \
- && sh -c "echo 'deb http://download.opensuse.org/repositories/home:/ocaml/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/ocaml.list" \
+RUN add-apt-repository -y ppa:avsm/ocaml42+opam12 \
  && apt-get update -y \
- && apt-get install -y ocaml build-essential exuberant-ctags \
+ && apt-get install -y ocaml-nox build-essential \
  && ./unison-install.sh \
- && apt-get purge -y ocaml build-essential exuberant-ctags \
+ && apt-get purge -y ocaml-nox build-essential \
  && apt-get clean autoclean \
  && apt-get autoremove -y \
  && rm -rf /var/lib/{apt,dpkg,cache,log}/ /tmp/* /var/tmp/*
